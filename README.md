@@ -1,13 +1,69 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
-   
-### Simulator.
-You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
 
-To run the simulator on Mac/Linux, first make the binary file executable with the following command:
-```shell
-sudo chmod u+x {simulator_file_name}
-```
+
+##  Model Documentation
+
+## The following criteria are met:
+
+### The code compiles correctly. 
+Code must compile without errors with cmake and make. 
+Given that we've made CMakeLists.txt as general as possible, it's recommend that you do not change it unless you can guarantee that your changes will still compile on any platform.
+
+### The car is able to drive at least 4.32 miles without incident.. 
+![Screenshot](./images/car_long_running.png)
+
+The top right screen of the simulator shows the current/best miles driven without incident. Incidents include exceeding acceleration/jerk/speed, collision, 
+and driving outside of the lanes. Each incident case is also listed below in more detail.
+
+The Car drives multiple laps without violating the simulator rules.
+
+### The car drives according to the speed limit.
+![Screenshot](./images/car_speed_below50.png)
+
+The car doesn't drive faster than the speed limit. Also the car isn't driving much slower than speed limit unless 
+obstructed by traffic.
+
+Car maintains speed below 50 mph, it slows down when there is a car ahead.
+
+### Max Acceleration and Jerk are not Exceeded. 
+![Screenshot](./images/car_stays_in_lane.png) 
+
+The car does not exceed a total acceleration of 10 m/s^2 and a jerk of 10 m/s^3.
+
+Total acceleration is way below and is appx -2 to 3 m/s^2  and a jerk is appx -2 to 3 m/s^2  
+
+### Car does not have collisions. 
+![Screenshot](./images/car_long_running.png)
+The car must not come into contact with any of the other cars on the road.
+
+### The car stays in its lane, except for the time between changing lanes.
+	
+![Screenshot](./images/lane_change2.png)	
+![Screenshot](./images/lane_change0.png)
+![Screenshot](./images/lane_change3.png)
+![Screenshot](./images/lane_change1.png) 	
+![Screenshot](./images/lane_change4.png)	 
+![Screenshot](./images/lane_change5.png)	
+
+The Car is able to chane lane.
+ 
+
+## How it works:
+
+
+### classes 
+  main.cpp, PlanPath.ccp, PlanPath.h. 3rd party = spline.h, json.hpp, Egen-3-3 lib.
+
+- PlanPath class: 
+  - PlanPath class handles messages received from simulator - uWS::WebSocket.
+  - The class first =  decides which lane and what speed/accelation to maintain. This is to avoid collision, jerks. Also do any safe lane changes if there is a slow moving vehicle ahead. It also make sure that it drives in lane otherwise.   
+  - next = it construct a spline using two previous points + 3 points at 30 ms apart in frenet. 
+  - finally creates a trajectory =  it creatres list of waypoints using the spline. (given x , spline returns y !!! ). The number and distance bewteeen points depends on what safe speed and lane requirement and the previous non-consumed waypoints.
+ 
+
+### Simulator.
+You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
 
 ### Goals
 In this project your goal is to safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit. You will be provided the car's localization and sensor fusion data, there is also a sparse map list of waypoints around the highway. The car should try to go as close as possible to the 50 MPH speed limit, which means passing slower traffic when possible, note that other cars will try to change lanes too. The car should avoid hitting other cars at all cost as well as driving inside of the marked road lanes at all times, unless going from one lane to another. The car should be able to make one complete loop around the 6946m highway. Since the car is trying to go 50 MPH, it should take a little over 5 minutes to complete 1 loop. Also the car should not experience total acceleration over 10 m/s^2 and jerk that is greater than 10 m/s^3.
